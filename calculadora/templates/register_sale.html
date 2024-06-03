@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registrar Venda</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function calculateTotals() {
+                const data = {
+                    group: $('#id_group').val(),
+                    pistola_hk: $('#id_pistola_hk').val(),
+                    pistola_glock: $('#id_pistola_glock').val(),
+                    sub_mp5: $('#id_sub_mp5').val(),
+                    sub_escorpion: $('#id_sub_escorpion').val(),
+                    fuzil_nsr: $('#id_fuzil_nsr').val(),
+                    fuzil_m4a4: $('#id_fuzil_m4a4').val(),
+                    pistola_hk_municao: $('#id_pistola_hk_municao').val(),
+                    pistola_glock_municao: $('#id_pistola_glock_municao').val(),
+                    sub_mp5_municao: $('#id_sub_mp5_municao').val(),
+                    sub_escorpion_municao: $('#id_sub_escorpion_municao').val(),
+                    fuzil_nsr_municao: $('#id_fuzil_nsr_municao').val(),
+                    fuzil_m4a4_municao: $('#id_fuzil_m4a4_municao').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                };
+
+                $.post("{% url 'calculate_totals' %}", data, function(response) {
+                    $('#total-value').text('Valor Total: R$ ' + response.total_value.toLocaleString());
+                    $('#treasurer-value').text('Valor do Tesoureiro: R$ ' + response.treasurer_value.toLocaleString());
+                });
+            }
+
+            $('#id_group').change(function() {
+                const group = $(this).val();
+                const weaponPrices = {{ weapon_form.get_weapon_prices|safe }};
+                
+                $('.weapon-field').each(function() {
+                    const weapon = $(this).data('weapon');
+                    const price = weaponPrices[weapon][group];
+                    if (price > 0) {
+                        $(this).show();
+                        $(`.munition-field[data-weapon=${weapon}]`).show();
+                    } else {
+                        $(this).hide();
+                        $(`.munition-field[data-weapon=${weapon}]`).hide();
+                    }
+                });
+                calculateTotals();
+            });
+
+            $('input').on('input', calculateTotals);
+            calculateTotals();  // Call on page load
+        });
+    </script>
+</head>
+<body>
+    <h1>Registrar Venda</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_group">Grupo:</label>
+        {{ weapon_form.group }}
+
+        <div class="weapon-field" data-weapon="pistola_hk">
+            {{ weapon_form.pistola_hk.label_tag }} {{ weapon_form.pistola_hk }}
+        </div>
+        <div class="weapon-field" data-weapon="pistola_glock">
+            {{ weapon_form.pistola_glock.label_tag }} {{ weapon_form.pistola_glock }}
+        </div>
+        <div class="weapon-field" data-weapon="sub_mp5">
+            {{ weapon_form.sub_mp5.label_tag }} {{ weapon_form.sub_mp5 }}
+        </div>
+        <div class="weapon-field" data-weapon="sub_escorpion">
+            {{ weapon_form.sub_escorpion.label_tag }} {{ weapon_form.sub_escorpion }}
+        </div>
+        <div class="weapon-field" data-weapon="fuzil_nsr">
+            {{ weapon_form.fuzil_nsr.label_tag }} {{ weapon_form.fuzil_nsr }}
+        </div>
+        <div class="weapon-field" data-weapon="fuzil_m4a4">
+            {{ weapon_form.fuzil_m4a4.label_tag }} {{ weapon_form.fuzil_m4a4 }}
+        </div>
+
+        <div class="munition-field" data-weapon="pistola_hk">
+            {{ weapon_form.pistola_hk_municao.label_tag }} {{ weapon_form.pistola_hk_municao }}
+        </div>
+        <div class="munition-field" data-weapon="pistola_glock">
+            {{ weapon_form.pistola_glock_municao.label_tag }} {{ weapon_form.pistola_glock_municao }}
+        </div>
+        <div class="munition-field" data-weapon="sub_mp5">
+            {{ weapon_form.sub_mp5_municao.label_tag }} {{ weapon_form.sub_mp5_municao }}
+        </div>
+        <div class="munition-field" data-weapon="sub_escorpion">
+            {{ weapon_form.sub_escorpion_municao.label_tag }} {{ weapon_form.sub_escorpion_municao }}
+        </div>
+        <div class="munition-field" data-weapon="fuzil_nsr">
+            {{ weapon_form.fuzil_nsr_municao.label_tag }} {{ weapon_form.fuzil_nsr_municao }}
+        </div>
+        <div class="munition-field" data-weapon="fuzil_m4a4">
+            {{ weapon_form.fuzil_m4a4_municao.label_tag }} {{ weapon_form.fuzil_m4a4_municao }}
+        </div>
+
+        <button type="submit">Registrar Venda</button>
+    </form>
+    <div id="total-value">Valor Total: R$ 0</div>
+    <div id="treasurer-value">Valor do Tesoureiro: R$ 0</div>
+</body>
+</html>
