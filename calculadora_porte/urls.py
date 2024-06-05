@@ -21,7 +21,7 @@ from calculadora.views import register_sale, sale_list, calculate_totals, sale_r
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('register-sale/', register_sale, name='register_sale'),
+    path('', register_sale, name='register_sale'),
     path('sale-list/', sale_list, name='sale_list'),
     path('calculate-totals/', calculate_totals, name='calculate_totals'),
     path('sale-report/<int:sale_id>/', sale_report, name='sale_report'),
