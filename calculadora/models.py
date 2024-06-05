@@ -1,4 +1,3 @@
-# models.py
 from django.db import models
 
 class WeaponInventory(models.Model):
@@ -87,11 +86,11 @@ class Sale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_porte(self):
-        if self.weapon_inventory.pistola_hk > 0 or self.weapon_inventory.pistola_glock > 0:
+        if self.weapon_inventory.group == 1:
             return "Leve"
-        elif self.weapon_inventory.sub_mp5 > 0 or self.weapon_inventory.sub_escorpion > 0:
+        elif self.weapon_inventory.group in [2, 3]:
             return "Médio"
-        elif self.weapon_inventory.fuzil_nsr > 0 or self.weapon_inventory.fuzil_m4a4 > 0:
+        elif self.weapon_inventory.group in [4, 5]:
             return "Pesado"
         return "Desconhecido"
 
