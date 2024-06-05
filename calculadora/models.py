@@ -87,25 +87,13 @@ class Sale(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_porte(self):
-        weapons = [
-            self.weapon_inventory.pistola_hk,
-            self.weapon_inventory.pistola_glock,
-            self.weapon_inventory.sub_mp5,
-            self.weapon_inventory.sub_escorpion,
-            self.weapon_inventory.fuzil_nsr,
-            self.weapon_inventory.fuzil_m4a4
-        ]
-        weapon_names = [
-            "Pistola HK", "Pistola Glock", "Sub MP5", "Sub Escorpion", "Fuzil NSR", "Fuzil M4A4"
-        ]
-        porte = "Desconhecido"
-        for weapon, name in zip(weapons, weapon_names):
-            if weapon > 0:
-                if "Pistola" in name:
-                    porte = "Leve"
-                elif "Sub" in name or "Fuzil" in name:
-                    porte = "Pesado"
-        return porte
+        if self.weapon_inventory.pistola_hk > 0 or self.weapon_inventory.pistola_glock > 0:
+            return "Leve"
+        elif self.weapon_inventory.sub_mp5 > 0 or self.weapon_inventory.sub_escorpion > 0:
+            return "Médio"
+        elif self.weapon_inventory.fuzil_nsr > 0 or self.weapon_inventory.fuzil_m4a4 > 0:
+            return "Pesado"
+        return "Desconhecido"
 
     def get_vendido(self):
         vendidas = []
