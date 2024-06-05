@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .forms import WeaponInventoryForm
 from .models import Sale, WeaponInventory
@@ -6,16 +6,19 @@ from .models import Sale, WeaponInventory
 def register_sale(request):
     if request.method == 'POST':
         weapon_form = WeaponInventoryForm(request.POST)
-        if weapon_form.is_valid():
+        buyer_id = request.POST.get('buyer_id')
+        if weapon_form.is_valid() and buyer_id:
             weapon_inventory = weapon_form.save()
             sale = Sale.objects.create(
                 weapon_inventory=weapon_inventory,
+                buyer_id=buyer_id,
                 total_value=weapon_inventory.total_value,
                 treasurer_value=weapon_inventory.treasurer_value
             )
-            return redirect('sale_list')
+            return redirect('sale_report', sale_id=sale.id)
     else:
         weapon_form = WeaponInventoryForm()
+
     return render(request, 'register_sale.html', {'weapon_form': weapon_form})
 
 def sale_list(request):
@@ -70,3 +73,12 @@ def calculate_totals(request):
             'total_value': total_value,
             'treasurer_value': treasurer_value
         })
+
+def sale_report(request, sale_id):
+    sale = get_object_or_404(Sale, id=sale_id)
+    context = {
+        'sale': sale,
+        'porte': sale.get_porte(),
+        'vendido': sale.get_vendido()
+    }
+    return render(request, 'sale_report.html', context)

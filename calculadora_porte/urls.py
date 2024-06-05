@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from calculadora.views import register_sale, sale_list, calculate_totals
+from calculadora.views import register_sale, sale_list, calculate_totals, sale_report
 
 
 urlpatterns = [
@@ -24,4 +24,5 @@ urlpatterns = [
     path('register-sale/', register_sale, name='register_sale'),
     path('sale-list/', sale_list, name='sale_list'),
     path('calculate-totals/', calculate_totals, name='calculate_totals'),
+    path('sale-report/<int:sale_id>/', sale_report, name='sale_report'),
 ]

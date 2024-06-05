@@ -1,3 +1,4 @@
+# models.py
 from django.db import models
 
 class WeaponInventory(models.Model):
@@ -78,12 +79,61 @@ class WeaponInventory(models.Model):
 
         super().save(*args, **kwargs)
 
-
 class Sale(models.Model):
     weapon_inventory = models.ForeignKey(WeaponInventory, on_delete=models.CASCADE)
+    buyer_id = models.IntegerField(verbose_name="ID do Comprador")
     total_value = models.DecimalField(max_digits=15, decimal_places=2)
     treasurer_value = models.DecimalField(max_digits=15, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_porte(self):
+        weapons = [
+            self.weapon_inventory.pistola_hk,
+            self.weapon_inventory.pistola_glock,
+            self.weapon_inventory.sub_mp5,
+            self.weapon_inventory.sub_escorpion,
+            self.weapon_inventory.fuzil_nsr,
+            self.weapon_inventory.fuzil_m4a4
+        ]
+        weapon_names = [
+            "Pistola HK", "Pistola Glock", "Sub MP5", "Sub Escorpion", "Fuzil NSR", "Fuzil M4A4"
+        ]
+        porte = "Desconhecido"
+        for weapon, name in zip(weapons, weapon_names):
+            if weapon > 0:
+                if "Pistola" in name:
+                    porte = "Leve"
+                elif "Sub" in name or "Fuzil" in name:
+                    porte = "Pesado"
+        return porte
+
+    def get_vendido(self):
+        vendidas = []
+        if self.weapon_inventory.pistola_hk > 0:
+            vendidas.append(f"{self.weapon_inventory.pistola_hk}x Pistola HK")
+        if self.weapon_inventory.pistola_glock > 0:
+            vendidas.append(f"{self.weapon_inventory.pistola_glock}x Pistola Glock")
+        if self.weapon_inventory.sub_mp5 > 0:
+            vendidas.append(f"{self.weapon_inventory.sub_mp5}x Sub MP5")
+        if self.weapon_inventory.sub_escorpion > 0:
+            vendidas.append(f"{self.weapon_inventory.sub_escorpion}x Sub Escorpion")
+        if self.weapon_inventory.fuzil_nsr > 0:
+            vendidas.append(f"{self.weapon_inventory.fuzil_nsr}x Fuzil NSR")
+        if self.weapon_inventory.fuzil_m4a4 > 0:
+            vendidas.append(f"{self.weapon_inventory.fuzil_m4a4}x Fuzil M4A4")
+        if self.weapon_inventory.pistola_hk_municao > 0:
+            vendidas.append(f"{self.weapon_inventory.pistola_hk_municao}x Munição Pistola HK")
+        if self.weapon_inventory.pistola_glock_municao > 0:
+            vendidas.append(f"{self.weapon_inventory.pistola_glock_municao}x Munição Pistola Glock")
+        if self.weapon_inventory.sub_mp5_municao > 0:
+            vendidas.append(f"{self.weapon_inventory.sub_mp5_municao}x Munição Sub MP5")
+        if self.weapon_inventory.sub_escorpion_municao > 0:
+            vendidas.append(f"{self.weapon_inventory.sub_escorpion_municao}x Munição Sub Escorpion")
+        if self.weapon_inventory.fuzil_nsr_municao > 0:
+            vendidas.append(f"{self.weapon_inventory.fuzil_nsr_municao}x Munição Fuzil NSR")
+        if self.weapon_inventory.fuzil_m4a4_municao > 0:
+            vendidas.append(f"{self.weapon_inventory.fuzil_m4a4_municao}x Munição Fuzil M4A4")
+        return ', '.join(vendidas)
 
     def __str__(self):
         return f"Venda {self.id} - Total: R${self.total_value} - Tesoureiro: R${self.treasurer_value}"

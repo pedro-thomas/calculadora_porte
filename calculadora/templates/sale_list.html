@@ -2,25 +2,41 @@
 <html>
 <head>
     <title>Histórico de Vendas</title>
+    <style>
+        .nav-buttons {
+            margin-bottom: 20px;
+        }
+        .nav-buttons button {
+            margin-right: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <div class="nav-buttons">
+        <button onclick="location.href='{% url 'register_sale' %}'">Registrar Venda</button>
+        <button onclick="location.href='{% url 'sale_list' %}'">Lista de Vendas</button>
+    </div>
     <h1>Histórico de Vendas</h1>
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Data</th>
+                <th>ID do Comprador</th>
                 <th>Valor Total</th>
                 <th>Valor do Tesoureiro</th>
+                <th>Relatório</th>
             </tr>
         </thead>
         <tbody>
             {% for sale in sales %}
             <tr>
                 <td>{{ sale.id }}</td>
-                <td>{{ sale.date }}</td>
+                <td>{{ sale.buyer_id }}</td>
                 <td>{{ sale.total_value }}</td>
                 <td>{{ sale.treasurer_value }}</td>
+                <td><a href="{% url 'sale_report' sale.id %}">Ver Relatório</a></td>
             </tr>
             {% endfor %}
         </tbody>
